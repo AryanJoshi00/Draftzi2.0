@@ -1,12 +1,44 @@
-# React + Vite
+# 📄 Draftzi – Legal Document Automation Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Draftzi** is an AI-powered web platform that helps users generate legally formatted documents like NDAs, rent agreements, and freelance contracts by answering a few smart, chatbot-driven questions.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+- ✅ User registration & login (email/password)
+- ✅ Industry-based onboarding flow
+- ✅ Chatbot interface (Zippy) to collect inputs
+- ✅ Smart template selection based on user input
+- ✅ Dynamic question flow (8–10 key questions)
+- ✅ Live preview of legal documents
+- ✅ Download as clean PDF or DOCX
+- ✅ User dashboard with document history
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🧱 Tech Stack
+
+- **Frontend:** React.js / Next.js  
+- **Backend:** 
+- **Database:**   
+- **Templating:** 
+- **PDF Generation:**
+
+---
+
+## 📦 Getting Started
+
+### 1. Clone the repo
+
+```bash
+git clone [https://github.com/AryanJoshi00/Draftzi.git]
+cd Draftzi
+```
+
+### 2. Run the server locally
+
+```bash
+npm install
+npm run dev
+```

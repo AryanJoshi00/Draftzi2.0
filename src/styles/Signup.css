@@ -18,7 +18,7 @@
   height: 80vh;
   max-width: none;
   text-align: center;
-  overflow-y: auto; /* Allow scrolling within container if needed */
+  overflow: hidden; /* Changed from overflow-y: auto to prevent scrolling issues */
   margin: 0; /* Remove margin since we're using absolute positioning */
   display: flex;
   flex-direction: column;
@@ -28,6 +28,7 @@
   top: calc(50% + 35px); /* Center vertically and add half of navbar height */
   left: 50%;
   transform: translate(-50%, -50%);
+  scrollbar-width: none;
 }
 
 /* Header */
@@ -67,7 +68,7 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  padding: 10px 16px;
+  padding: 8px 16px;
   border: 2px solid #e1e5e9;
   border-radius: 12px;
   cursor: pointer;
@@ -76,15 +77,17 @@
 }
 
 .option-card:hover {
-  border-color: #0080ff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 128, 255, 0.15);
+  border-color: #4a90e2;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px rgba(74, 144, 226, 0.2);
+  background: rgba(74, 144, 226, 0.05);
 }
 
 .option-card.selected {
   border-color: #0080ff;
-  box-shadow: 0 8px 20px rgba(0, 128, 255, 0.2);
-  background: rgba(0, 128, 255, 0.02);
+  box-shadow: 0 8px 20px rgba(0, 128, 255, 0.3);
+  background: rgba(0, 128, 255, 0.08);
+  transform: scale(1.02);
 }
 
 .option-image {
@@ -132,7 +135,7 @@
 
 /* Action Area */
 .action-area {
-  margin-top: 24px;
+  margin-top: 8px;
 }
 
 .continue-btn {
@@ -160,6 +163,259 @@
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+/* Second Step Styles */
+.signup-step-2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 100%;
+  gap: 40px;
+  position: relative;
+}
+
+.signup-content-left {
+  flex: 1;
+  text-align: left;
+  max-width: 500px;
+}
+
+.signup-content-left h1 {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 16px 0;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+.signup-content-left p {
+  font-size: 18px;
+  color: #666;
+  margin: 0 0 24px 0;
+  line-height: 1.6;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease 0.2s forwards;
+}
+
+.signup-form {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease 0.4s forwards;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 16px 20px 16px 50px;
+  border: 2px solid #e1e5e9;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: #ffffff;
+  color: #1a1a1a;
+  box-sizing: border-box;
+}
+
+.form-group input::placeholder {
+  color: #999;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #0080ff;
+    box-shadow: 0 0 0 3px rgba(0, 128, 255, 0.1);
+}
+
+.form-group input.error {
+  border-color: #ff4444;
+  box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.1);
+}
+
+.form-group .icon {
+  position: absolute;
+  left: 16px;
+  top: 18px;
+  width: 20px;
+  height: 20px;
+  color: #666;
+  z-index: 1;
+}
+
+.error-message {
+  color: #ff4444;
+  font-size: 14px;
+  margin-top: 5px;
+  text-align: left;
+}
+
+.get-started-btn {
+  background: #0080ff;
+  color: #ffffff;
+  border: none;
+  padding: 16px 32px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 24px auto 0 auto; /* centers horizontally with more top margin */
+  width: 100%;
+  max-width: 200px;
+}
+
+.get-started-btn:hover {
+  background: #0066cc;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 128, 255, 0.3);
+}
+
+.slogan-container {
+  margin-top: 32px;
+  text-align: center;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease 0.8s forwards;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.slogan-line {
+  height: 1.3px;
+  background: radial-gradient(#006edc, #4a90e2);
+  width: 0;
+  opacity: 0;
+  border-radius: 1px;
+}
+
+.slogan-line.top {
+  animation: growLineLeftToRight 2.5s ease 1s forwards;
+}
+
+.slogan-line.bottom {
+  animation: growLineLeftToRight 2.5s ease 1s forwards;
+}
+
+.slogan-text {
+  font-size: 16px;
+  color: #666;
+  font-style: italic;
+  margin: 0;
+  white-space: nowrap;
+  opacity: 0;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  overflow: hidden;
+  width: 0;
+  animation: typewriterEffect 3s ease 1s forwards;
+}
+
+.signup-content-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.enlarged-image {
+  width: 400px;
+  height: 550px;
+  border-radius: 16px;
+  overflow: hidden;
+  /*box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);*/
+  opacity: 0;
+  animation: imageEnlarge 1s ease 0.3s forwards;
+}
+
+.enlarged-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px) translateY(-50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(-50%);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px) translateY(-50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(-50%);
+  }
+}
+
+@keyframes imageEnlarge {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes growLineLeftToRight {
+  from {
+    opacity: 0;
+    width: 0;
+  }
+  to {
+    opacity: 1;
+    width: 200px;
+  }
+}
+
+@keyframes typewriterEffect {
+  0% {
+    opacity: 0.9;
+    width: 0;
+  }
+  100% {
+    opacity: 1;
+    width: 100%;
+  }
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 200px;
+  }
 }
 
 /* Responsive Design */
@@ -197,5 +453,50 @@
   .continue-btn {
     padding: 12px 28px;
     font-size: 15px;
+  }
+
+  /* Mobile styles for step 2 */
+  .signup-step-2 {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .signup-content-left {
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .signup-content-left h1 {
+    font-size: 28px;
+  }
+
+  .signup-content-left p {
+    font-size: 16px;
+  }
+
+  .enlarged-image {
+    width: 280px;
+    height: 350px;
+  }
+
+  .decorative-quotes {
+    display: none; /* Hide decorative elements on mobile */
+  }
+
+  .slogan-line {
+    max-width: 80px;
+  }
+
+  .slogan-text {
+    font-size: 14px;
+  }
+
+  .quote-left {
+    left: -40px;
+  }
+
+  .quote-right {
+    right: -40px;
   }
 }
