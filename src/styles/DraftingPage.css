@@ -138,14 +138,16 @@
   align-items: center;
   gap: 16px;
   margin-top: 20px;
+  flex-wrap: wrap;
 }
 
 .step-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   position: relative;
+  z-index: 1;
 }
 
 .step-number {
@@ -160,6 +162,7 @@
   font-weight: 600;
   font-size: 0.9rem;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .step-item.active .step-number {
@@ -172,6 +175,12 @@
   font-size: 0.9rem;
   color: #64748b;
   font-weight: 500;
+  line-height: 1.2;
+  display: block;
+  text-align: center;
+  max-width: 140px;
+  margin-top: 2px;
+  word-break: break-word;
 }
 
 .step-connector {
@@ -180,12 +189,30 @@
   background: #e2e8f0;
   margin: 0 8px;
   position: relative;
-  display: none;
+  display: block;
+  align-self: center;
+  z-index: 0;
 }
+
+@media (max-width: 768px) {
+  .step-number {
+    width: 36px;
+    height: 36px;
+    font-size: 0.85rem;
+  }
+  .step-item span {
+    max-width: 120px;
+  }
+}
+
+/* Strong overrides to avoid conflicts with other global .step-* styles */
+.progress-steps .step-item { position: relative; display: flex; flex-direction: column; align-items: center; }
+.progress-steps .step-number { position: static !important; top: auto !important; left: auto !important; transform: none !important; box-shadow: none; }
+.progress-steps .step-connector { position: static; transform: none; }
 
 .step-connector.active {
   background: #e2e8f0;
-  display: none;
+  display: block;
 }
 
 .step-connector::after {
@@ -852,5 +879,106 @@
 
   .keyboard-hint {
     font-size: 0.75rem;
+  }
+}
+
+/* Document Loading Screen */
+.doc-loading-screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  cursor: default;
+}
+
+.doc-card-wrap {
+  perspective: 1200px;
+  margin-bottom: 28px;
+}
+
+.doc-card {
+  width: min(620px, 90vw);
+  height: min(70vh, 520px);
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.12);
+  border: 1px solid #eef1f5;
+  padding: 32px 28px;
+  transform-style: preserve-3d;
+  animation: docFloat 2.4s ease-in-out both;
+}
+
+@keyframes docFloat {
+  0% { transform: translateZ(0) scale(0.98); }
+  100% { transform: translateZ(0) scale(1); }
+}
+
+.doc-line {
+  height: 18px;
+  margin: 12px 0;
+  color: #6b7280; /* gray-500 for active typing */
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+  display: flex;
+  align-items: center;
+}
+
+.doc-line.done {
+  color: #374151; /* gray-700 when completed */
+}
+
+.blinking-cursor {
+  margin-left: 4px;
+  color: #374151;
+  animation: blink 1s steps(2, start) infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.doc-loading-progress {
+  width: min(620px, 90vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.doc-loading-label {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 600;
+}
+
+.doc-loading-bar {
+  width: 100%;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.doc-loading-fill {
+  height: 100%;
+  background: #3B82F6;
+  border-radius: 999px;
+  transition: width 0.25s ease-out;
+}
+
+@media (max-width: 768px) {
+  .doc-card {
+    height: min(60vh, 420px);
+    padding: 24px 20px;
+  }
+  .doc-line {
+    margin: 10px 0;
+    height: 16px;
+    font-size: 13px;
   }
 }

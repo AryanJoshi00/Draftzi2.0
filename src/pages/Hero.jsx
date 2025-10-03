@@ -1,39 +1,46 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Play } from "lucide-react";
+import { useScrollAnimation } from "../hooks/useScrollAnimation";
 import "./Hero.css";
 
 export default function Hero() {
   const navigate = useNavigate();
+  const [ref, isVisible] = useScrollAnimation({
+    threshold: 0.1,
+    stagger: true,
+    staggerDelay: 150
+  });
 
   const handleSignUpClick = () => {
     navigate("/signup");
   };
 
   return (
-    <section className="hero">
+    <section className="hero" ref={ref}>
       <div className="hero-background">
         <div className="hero-gradient"></div>
         <div className="hero-pattern"></div>
       </div>
       
-      <div className="hero-container">
+      <div className={`hero-container ${isVisible ? 'animate-in' : ''}`}>
         <div className="hero-content">
-          <div className="hero-badge">
+          <div className="hero-badge stagger-item">
             <span className="badge-text">✨ AI-Powered Legal Drafting</span>
           </div>
           
-          <h1 className="hero-title">
-            Draft Legal & Compliance Docs the{" "}
-            <span className="hero-highlight">Easy Way</span>, with Draftzi.
-          </h1>
-          
-          <p className="hero-subtitle">
-            Draftzi is your AI co-pilot for legal, HR & compliance paperwork.
+          <h1 className="hero-title stagger-item">
+  Draft Docs the <br />
+  <span className="hero-highlight">Easy Way</span>
+</h1>
+
+
+          <p className="hero-subtitle stagger-item">
+            Draftzi is your AI co-pilot for all paperwork.<br />
             Why wrestle with drafts when Draftzi drafts for you?
           </p>
           
-          <div className="hero-actions">
+          <div className="hero-actions stagger-item">
             <button className="hero-cta primary" onClick={handleSignUpClick}>
               <span>Start Drafting Free</span>
               <ArrowRight size={20} />
@@ -45,7 +52,7 @@ export default function Hero() {
             </button>
           </div>
           
-          <div className="hero-social-proof">
+          <div className="hero-social-proof stagger-item">
             <p className="social-proof-text">
               Trusted by <strong>1000+</strong> legal professionals
             </p>
@@ -58,7 +65,7 @@ export default function Hero() {
           </div>
         </div>
         
-        <div className="hero-visual">
+        <div className="hero-visual stagger-item">
           <div className="hero-cards">
             <div className="floating-card card-1">
               <div className="card-header">
@@ -110,10 +117,6 @@ export default function Hero() {
             </div>
           </div>
         </div>
-      </div>
-      
-      <div className="hero-scroll-indicator">
-        <div className="scroll-arrow"></div>
       </div>
     </section>
   );

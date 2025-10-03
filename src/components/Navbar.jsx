@@ -26,7 +26,9 @@ export default function Navbar() {
       <div className="navbar-container">
         {/* Logo */}
         <div className="navbar-logo" onClick={handleLogoClick}>
-          <div className="navbar-icon">D</div>
+          <div className="navbar-icon">
+            <img src="/logo.png" alt="Draftzi logo" className="navbar-logo-img" />
+          </div>
           <span>Draftzi</span>
         </div>
 
@@ -58,7 +60,7 @@ export default function Navbar() {
         </div>
 
         {/* Auth Buttons - hidden on dashboard */}
-        {!["/dashboard","/client-vault","/documents-overview","/pending-documents","/compliance-calendar","/notifications","/profile-settings","/upgrade-plan","/account-settings","/help"].includes(location.pathname) && (
+        {!["/dashboard","/client-vault","/documents-overview","/compliance-calendar","/notifications","/profile-settings","/upgrade-plan","/account-settings","/help"].includes(location.pathname) && (
           <div className="navbar-auth">
             <button className="auth-btn login-btn">Login</button>
           </div>

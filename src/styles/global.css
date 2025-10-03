@@ -6,6 +6,15 @@
   user-select: none;
 }
 
+/* Document Card Scroller cursor styles */
+body.hovering-card {
+  cursor: none !important;
+}
+
+body.hovering-card * {
+  cursor: none !important;
+}
+
 /* Allow text selection only for input fields and textareas */
 input,
 textarea {
@@ -14,12 +23,18 @@ textarea {
   -ms-user-select: text;
   user-select: text;
 }
-html,
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+  background: #4a5fd4; /* Ensure blue background on all root elements */
+  /* overflow-x: hidden; -- REMOVED: This was preventing card animations */
+}
+
 body,
 #root {
   height: 100%;
   background: #4a5fd4; /* Ensure blue background on all root elements */
-  overflow-x: hidden; /* Prevent horizontal scrolling globally */
+  /* overflow-x: hidden; -- REMOVED: This was preventing card animations */
 }
 body {
   margin: 0;
@@ -28,7 +43,7 @@ body {
     sans-serif;
   color: #111;
   min-height: 100vh; /* Ensure body covers full viewport height */
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  /* overflow-x: hidden; -- REMOVED: This was preventing card animations */
 }
 
 /* App wrapper for flexbox layout */
@@ -36,7 +51,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  /* overflow-x: hidden; -- REMOVED: This was preventing card animations */
 }
 
 /* Signup page wrapper */
@@ -50,10 +65,10 @@ body {
 .main-content {
   flex: 1;
   padding: 0; /* sections handle their own padding */
-  margin-top: 70px; /* space for navbar */
+  margin-top: 0; /* Remove margin since hero now goes behind navbar */
   background: #4a5fd4; /* Ensure main also has blue background */
   width: 100%;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  /* overflow-x: hidden; -- REMOVED: This was preventing card animations */
 }
 
 /* Standardized page container */
@@ -170,3 +185,130 @@ body {
 .standard-content-container.centered::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
 .standard-content-container.centered::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
 .standard-content-container.centered::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+
+/* Hide scrollbars but allow scrolling on dashboard-related pages */
+.client-vault-page .standard-content-container,
+.client-vault-page .standard-content-container.centered,
+.documents-overview-page .standard-content-container,
+.documents-overview-page .standard-content-container.centered,
+.compliance-calendar-page .standard-content-container,
+.compliance-calendar-page .standard-content-container.centered {
+  overflow: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.client-vault-page .standard-content-container::-webkit-scrollbar,
+.client-vault-page .standard-content-container.centered::-webkit-scrollbar,
+.documents-overview-page .standard-content-container::-webkit-scrollbar,
+.documents-overview-page .standard-content-container.centered::-webkit-scrollbar,
+.compliance-calendar-page .standard-content-container::-webkit-scrollbar,
+.compliance-calendar-page .standard-content-container.centered::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* ========================================
+   SCROLL REVEAL ANIMATIONS
+   ======================================== */
+
+/* Base animation classes */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.6s ease-out;
+  will-change: transform, opacity;
+}
+
+.scroll-reveal.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered animation items */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease-out;
+  will-change: transform, opacity;
+}
+
+.stagger-item.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Specific animation variants */
+.scroll-reveal-fade {
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
+}
+
+.scroll-reveal-fade.animate-in {
+  opacity: 1;
+}
+
+.scroll-reveal-slide-up {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.6s ease-out;
+}
+
+.scroll-reveal-slide-up.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal-slide-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: all 0.6s ease-out;
+}
+
+.scroll-reveal-slide-left.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-slide-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: all 0.6s ease-out;
+}
+
+.scroll-reveal-slide-right.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.6s ease-out;
+}
+
+.scroll-reveal-scale.animate-in {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Animation delays for staggered effects */
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+.delay-600 { transition-delay: 600ms; }
+.delay-700 { transition-delay: 700ms; }
+.delay-800 { transition-delay: 800ms; }
+
+/* Performance optimizations */
+.scroll-reveal,
+.stagger-item,
+.scroll-reveal-fade,
+.scroll-reveal-slide-up,
+.scroll-reveal-slide-left,
+.scroll-reveal-slide-right,
+.scroll-reveal-scale {
+  backface-visibility: hidden;
+  perspective: 1000px;
+}

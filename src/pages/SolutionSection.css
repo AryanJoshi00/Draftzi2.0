@@ -2,8 +2,11 @@
 .solution-section {
   width: 100vw;
   background: #4a5fd4;
-  padding: 80px 24px;
+  padding: 100px 24px;
   color: #fff;
+  position: relative;
+  will-change: transform;
+  transition: transform 0.1s ease-out;
 }
 
 .solution-container {

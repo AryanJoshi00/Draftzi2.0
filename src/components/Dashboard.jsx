@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend, AreaChart, Area } from "recharts";
 import {
   FaUser,
   FaTimes,
   FaChartLine,
   FaFileAlt,
-  FaClock,
   FaCalendarAlt,
   FaArrowRight,
   FaBell,
@@ -16,9 +16,9 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import "../styles/Dashboard.css";
-import lawyerImage from "../Images/lawyer.png";
-import hrwomanImage from "../Images/HRwoman.png";
-import cacsImage from "../Images/cacs.png";
+import lawyerImage from "@assets/images/lawyer.png";
+import hrwomanImage from "@assets/images/HRwoman.png";
+import cacsImage from "@assets/images/cacs.png";
 
 // Custom hook for number animation
 const useCountAnimation = (endValue, duration = 1500, delay = 0) => {
@@ -90,7 +90,6 @@ export default function Dashboard() {
   const METRICS = {
     totalClients: 153,
     documentsGenerated: 263,
-    pendingDocuments: 8,
     upcomingDeadlines: 3,
   };
 
@@ -103,6 +102,32 @@ export default function Dashboard() {
   useEffect(() => {
     setHasPageLoaded(true);
   }, []);
+
+  // Disable page scrolling when dashboard is mounted
+  useEffect(() => {
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
+  }, []);
+
+  // Brand colors for charts
+  const BRAND = {
+    primary: "#60a5fa",
+    secondary: "#f472b6",
+    grid: "#e5e7eb",
+    axis: "#9ca3af",
+  };
+
+  // Cumulative weekly data to match totals: clients 153, documents 263
+  const weeklyClientGrowth = [12, 27, 45, 65, 89, 117, 133, 153].map((v, i) => ({ label: `Week ${i + 1}`, clients: v }));
+  const weeklyDocumentsGrowth = [20, 44, 70, 100, 136, 178, 226, 263].map((v, i) => ({ label: `Week ${i + 1}`, documents: v }));
+
+  const weeklyOverallGrowth = weeklyClientGrowth;
 
   // Handle sidebar toggle
   const toggleSidebar = () => {
@@ -225,21 +250,6 @@ export default function Dashboard() {
               )}
             </div>
 
-            <div
-              className={`metric-card ${
-                selectedMetric === "pendingDocuments" ? "selected" : ""
-              } ${hasPageLoaded ? "loaded" : ""}`}
-              onClick={() => handleMetricSelect("pendingDocuments")}
-            >
-              <div className="metric-icon">
-                <FaClock />
-              </div>
-              <AnimatedNumber value={METRICS.pendingDocuments} delay={300} />
-              <div className="metric-label">Pending Documents</div>
-              {selectedMetric === "pendingDocuments" && isAnimating && (
-                <div className="flow-animation"></div>
-              )}
-            </div>
 
             <div
               className={`metric-card ${
@@ -272,37 +282,31 @@ export default function Dashboard() {
               {selectedMetric === "totalClients" && (
                 <>
                   <h2 className="section-title">Client Summary</h2>
-                  <div className="chart-container">
-                    <div className="chart-line light-blue"></div>
-                    <div className="chart-line pink"></div>
-                    <div className="chart-markers">
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                    </div>
+                  <p className="chart-subtitle">Last 8 weeks</p>
+                  <div style={{ width: '100%', height: '220px' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={weeklyClientGrowth} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="colorPrimaryClients" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={BRAND.primary} stopOpacity={0.35}/>
+                            <stop offset="95%" stopColor={BRAND.primary} stopOpacity={0}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid stroke={BRAND.grid} strokeDasharray="3 3" />
+                        <XAxis dataKey="label" stroke={BRAND.axis} tick={{ fontSize: 12 }} />
+                        <YAxis stroke={BRAND.axis} tick={{ fontSize: 12 }} />
+                        <Tooltip />
+                        <Legend verticalAlign="bottom" height={24} wrapperStyle={{ fontSize: 12 }} />
+                        <Area type="monotone" dataKey="clients" name="Total clients" stroke={BRAND.primary} fillOpacity={1} fill="url(#colorPrimaryClients)" strokeWidth={2} />
+                      </AreaChart>
+                    </ResponsiveContainer>
                   </div>
                   <div className="summary-section">
                     <h3>Summary</h3>
                     <ul className="summary-list">
-                      <li>
-                        Document generation has increased by 12% compared to
-                        last month.
-                      </li>
-                      <li>Peak usage observed on Mondays and Wednesdays.</li>
-                      <li>
-                        Most active clients: Aryan & Co., Kevin Law Associates.
-                      </li>
+                      <li>Client growth trending upward over the last 8 weeks.</li>
+                      <li>Average read rate improving week-over-week.</li>
+                      <li>Most active clients: Aryan & Co., Kevin Law Associates.</li>
                     </ul>
                   </div>
                   <button
@@ -317,31 +321,30 @@ export default function Dashboard() {
               {selectedMetric === "documentsGenerated" && (
                 <>
                   <h2 className="section-title">Documents Overview</h2>
-                  <div className="chart-container">
-                    <div className="chart-line light-blue"></div>
-                    <div className="chart-line pink"></div>
-                    <div className="chart-markers">
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                    </div>
+                  <p className="chart-subtitle">Last 8 weeks</p>
+                  <div style={{ width: '100%', height: '220px' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={weeklyDocumentsGrowth} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="colorPrimaryDocs" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={BRAND.primary} stopOpacity={0.35}/>
+                            <stop offset="95%" stopColor={BRAND.primary} stopOpacity={0}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid stroke={BRAND.grid} strokeDasharray="3 3" />
+                        <XAxis dataKey="label" stroke={BRAND.axis} tick={{ fontSize: 12 }} />
+                        <YAxis stroke={BRAND.axis} tick={{ fontSize: 12 }} />
+                        <Tooltip />
+                        <Legend verticalAlign="bottom" height={24} wrapperStyle={{ fontSize: 12 }} />
+                        <Area type="monotone" dataKey="documents" name="Total documents" stroke={BRAND.primary} fillOpacity={1} fill="url(#colorPrimaryDocs)" strokeWidth={2} />
+                      </AreaChart>
+                    </ResponsiveContainer>
                   </div>
                   <div className="summary-section">
                     <h3>Summary</h3>
                     <ul className="summary-list">
                       <li>Total documents generated this month: 263</li>
-                      <li>Most popular document type: Legal Contracts</li>
+                      <li>Reads trending up alongside generation volume.</li>
                       <li>Average generation time: 2.3 minutes per document</li>
                     </ul>
                   </div>
@@ -362,45 +365,6 @@ export default function Dashboard() {
                 </>
               )}
 
-              {selectedMetric === "pendingDocuments" && (
-                <>
-                  <h2 className="section-title">Pending Documents</h2>
-                  <div className="chart-container">
-                    <div className="chart-line light-blue"></div>
-                    <div className="chart-line pink"></div>
-                    <div className="chart-markers">
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker light-blue"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                      <div className="marker pink"></div>
-                    </div>
-                  </div>
-                  <div className="summary-section">
-                    <h3>Summary</h3>
-                    <ul className="summary-list">
-                      <li>8 documents are currently pending review</li>
-                      <li>Average pending time: 1.2 days</li>
-                      <li>Priority documents: 3 urgent, 5 standard</li>
-                    </ul>
-                  </div>
-                  <button
-                    className="cta-btn"
-                    onClick={() => handleNavigation("pending-documents")}
-                  >
-                    Open Pending Documents <FaArrowRight />
-                  </button>
-                </>
-              )}
 
               {selectedMetric === "upcomingDeadlines" && (
                 <>
@@ -453,13 +417,26 @@ export default function Dashboard() {
                   : "content-visible"
               }`}
             >
-              <div className="empty-state-content">
-                <FaChartLine className="empty-state-icon" />
-                <h3>Select a Metric</h3>
-                <p>
-                  Choose a metric card from the left to view detailed
-                  information and insights.
-                </p>
+              <div className="empty-state-content" style={{ width: '100%' }}>
+                <h2 className="section-title" style={{ textAlign: 'center', marginBottom: '0.5rem' }}>Growth Overview</h2>
+                <div style={{ width: '100%', height: '260px' }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={weeklyOverallGrowth} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="colorPrimaryOverview" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor={BRAND.primary} stopOpacity={0.35}/>
+                          <stop offset="95%" stopColor={BRAND.primary} stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid stroke={BRAND.grid} strokeDasharray="3 3" />
+                      <XAxis dataKey="label" stroke={BRAND.axis} tick={{ fontSize: 12 }} />
+                      <YAxis stroke={BRAND.axis} tick={{ fontSize: 12 }} />
+                      <Tooltip />
+                      <Legend verticalAlign="bottom" height={24} wrapperStyle={{ fontSize: 12 }} />
+                      <Area type="monotone" dataKey="clients" name="Total clients" stroke={BRAND.primary} fillOpacity={1} fill="url(#colorPrimaryOverview)" strokeWidth={2} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
           )}

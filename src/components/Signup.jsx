@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Signup.css";
-import lawyerImage from "../Images/lawyer.png";
-import hrwomanImage from "../Images/HRwoman.png";
-import cacsImage from "../Images/cacs.png";
+import lawyerImage from "@assets/images/lawyer.png";
+import hrwomanImage from "@assets/images/HRwoman.png";
+import cacsImage from "@assets/images/cacs.png";
 import { FaUser, FaEnvelope, FaBriefcase } from "react-icons/fa";
 
 

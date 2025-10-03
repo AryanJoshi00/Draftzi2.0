@@ -4,12 +4,16 @@ import { useScrollAnimation } from "../hooks/useScrollAnimation";
 import "./SolutionSection.css";
 
 export default function SolutionSection() {
-  const [ref, isVisible] = useScrollAnimation();
+  const [ref, isVisible] = useScrollAnimation({
+    threshold: 0.1,
+    stagger: true,
+    staggerDelay: 150
+  });
 
   return (
     <section className="solution-section" ref={ref}>
       <div className={`solution-container ${isVisible ? 'animate-in' : ''}`}>
-        <div className="solution-header">
+        <div className="solution-header stagger-item">
           <h2 className="solution-title">
             Draftzi turns Draft Hard into Draft Smart
           </h2>
@@ -20,7 +24,7 @@ export default function SolutionSection() {
 
         <div className="solution-grid">
           <div className="solution-features">
-            <div className="feature-card">
+            <div className="feature-card stagger-item">
               <div className="feature-icon">
                 <Zap size={24} />
               </div>
@@ -30,7 +34,7 @@ export default function SolutionSection() {
               </p>
             </div>
 
-            <div className="feature-card">
+            <div className="feature-card stagger-item">
               <div className="feature-icon">
                 <Lock size={24} />
               </div>
@@ -40,7 +44,7 @@ export default function SolutionSection() {
               </p>
             </div>
 
-            <div className="feature-card">
+            <div className="feature-card stagger-item">
               <div className="feature-icon">
                 <Calendar size={24} />
               </div>
@@ -50,7 +54,7 @@ export default function SolutionSection() {
               </p>
             </div>
 
-            <div className="feature-card">
+            <div className="feature-card stagger-item">
               <div className="feature-icon">
                 <LayoutDashboard size={24} />
               </div>
@@ -61,7 +65,7 @@ export default function SolutionSection() {
             </div>
           </div>
 
-          <div className="solution-visual">
+          <div className="solution-visual stagger-item">
             <div className="dashboard-preview">
               <div className="dashboard-header">
                 <h4>Draftzi Dashboard</h4>

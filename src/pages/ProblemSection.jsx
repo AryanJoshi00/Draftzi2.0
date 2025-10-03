@@ -4,12 +4,16 @@ import { useScrollAnimation } from "../hooks/useScrollAnimation";
 import "./ProblemSection.css";
 
 export default function ProblemSection() {
-  const [ref, isVisible] = useScrollAnimation();
+  const [ref, isVisible] = useScrollAnimation({
+    threshold: 0.1,
+    stagger: true,
+    staggerDelay: 200
+  });
 
   return (
     <section className="problem-section" ref={ref}>
       <div className={`problem-container ${isVisible ? 'animate-in' : ''}`}>
-        <div className="problem-header">
+        <div className="problem-header stagger-item">
           <h2 className="problem-title">Why Professionals Need Draftzi</h2>
           <p className="problem-subtitle">
             Legal and compliance professionals face the same challenges every day
@@ -17,7 +21,7 @@ export default function ProblemSection() {
         </div>
 
         <div className="problem-cards">
-          <div className="problem-card">
+          <div className="problem-card stagger-item">
             <div className="problem-icon">
               <Scale size={24} />
             </div>
@@ -27,7 +31,7 @@ export default function ProblemSection() {
             </p>
           </div>
 
-          <div className="problem-card">
+          <div className="problem-card stagger-item">
             <div className="problem-icon">
               <BarChart3 size={24} />
             </div>
@@ -37,7 +41,7 @@ export default function ProblemSection() {
             </p>
           </div>
 
-          <div className="problem-card">
+          <div className="problem-card stagger-item">
             <div className="problem-icon">
               <Users size={24} />
             </div>
@@ -48,7 +52,7 @@ export default function ProblemSection() {
           </div>
         </div>
 
-        <div className="problem-result">
+        <div className="problem-result stagger-item">
           <p className="result-text">
             <strong>Result:</strong> Time wasted. Missed deadlines. Costly errors.
           </p>

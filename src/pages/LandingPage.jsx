@@ -2,7 +2,10 @@ import React from "react";
 import Hero from "./Hero";
 import ProblemSection from "./ProblemSection";
 import SolutionSection from "./SolutionSection";
-import DocumentsShowcase from "./DocumentsShowcase";
+import HowItWorks from "../components/HowItWorks";
+import DocumentCardScroller from "../components/DocumentCardScroller";
+import FinalCTA from "../components/FinalCTA";
+import Footer from "../components/Footer";
 
 export default function LandingPage() {
   return (
@@ -10,7 +13,10 @@ export default function LandingPage() {
       <Hero />
       <ProblemSection />
       <SolutionSection />
-      <DocumentsShowcase />
+      <HowItWorks />
+      <DocumentCardScroller />
+      <FinalCTA />
+      <Footer />
     </>
   );
 }

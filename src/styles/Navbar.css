@@ -43,14 +43,19 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4a5fd4, #6b7ae8);
-  color: #ffffff;
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  font-size: 20px;
-  box-shadow: 0 4px 12px rgba(74, 95, 212, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.navbar-logo-img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  display: block;
 }
 
 .navbar-logo span {
@@ -301,7 +306,11 @@
   .navbar-icon {
     width: 36px;
     height: 36px;
-    font-size: 18px;
+  }
+
+  .navbar-logo-img {
+    width: 22px;
+    height: 22px;
   }
 }
 

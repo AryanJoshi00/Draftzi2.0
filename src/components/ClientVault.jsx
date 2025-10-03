@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaArrowLeft,
@@ -333,6 +333,22 @@ export default function ClientVault() {
       pinned: false,
     },
   ]);
+
+  // Load and persist clients to localStorage
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('clientsData') || '[]');
+      if (stored.length) {
+        setClients(stored);
+      }
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('clientsData', JSON.stringify(clients));
+    } catch {}
+  }, [clients]);
 
   // Modal state
   const [isAddOpen, setIsAddOpen] = useState(false);

@@ -237,13 +237,15 @@ export default function DraftingPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const client = location.state?.client;
-  const [stage, setStage] = useState("home"); // home → docs → form
+  const [stage, setStage] = useState("home"); // home → docs → form → loading
   const [selectedDoc, setSelectedDoc] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({});
   const [isFormStarted, setIsFormStarted] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [errorTimers, setErrorTimers] = useState({});
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [typedState, setTypedState] = useState({ lineIndex: 0, charIndex: 0 });
   
   // Get questions for the selected document
   const formQuestions = selectedDoc ? getQuestionsForDocument(selectedDoc.name) : [];
@@ -263,8 +265,112 @@ export default function DraftingPage() {
   // Get current document types based on user profession
   const currentDocTypes = userProfile ? getDocTypesByProfession(userProfile.userType) : getDocTypesByProfession();
   
+  // Loading screen typing simulation
+  const mockLines = [
+    "Parties identified…",
+    "Key dates set…",
+    "Clauses adapted…",
+    "Formatting applied…",
+    "Review pass complete…",
+  ];
 
+  useEffect(() => {
+    if (stage !== "loading") return;
 
+    // Total duration ~5000ms
+    const totalMs = 5000;
+    const start = performance.now();
+
+    // Progress bar ticker
+    const raf = (ts) => {
+      const elapsed = ts - start;
+      const pct = Math.min(100, Math.round((elapsed / totalMs) * 100));
+      setLoadingProgress(pct);
+      if (elapsed < totalMs) requestAnimationFrame(raf);
+    };
+    const rafId = requestAnimationFrame(raf);
+
+    // Typed lines ticker
+    let line = 0;
+    let char = 0;
+    const perLine = totalMs / mockLines.length; // even slice
+    const charTimer = setInterval(() => {
+      const now = performance.now();
+      const elapsed = now - start;
+      line = Math.min(mockLines.length - 1, Math.floor(elapsed / perLine));
+      // animate char within current line
+      const lineElapsed = elapsed - line * perLine;
+      const lineLen = mockLines[line].length;
+      char = Math.min(lineLen, Math.floor((lineElapsed / perLine) * lineLen));
+      setTypedState({ lineIndex: line, charIndex: char });
+    }, 30);
+
+    const doneTimer = setTimeout(() => {
+      clearInterval(charTimer);
+      cancelAnimationFrame(rafId);
+      setLoadingProgress(100);
+      // Smooth transition to documents preview after brief delay
+      setTimeout(() => {
+        try {
+          const existingDocs = JSON.parse(localStorage.getItem('generatedDocuments') || '[]');
+          const title = selectedDoc?.name || 'Generated Document';
+          const clientName = (client && (client.name || client.firmName)) || formData[1] || 'Client';
+          const today = new Date().toISOString().slice(0,10);
+          const newDoc = {
+            id: Date.now(),
+            title,
+            type: 'Template',
+            client: clientName,
+            createdDate: today,
+            lastModified: today,
+            status: 'In Review',
+            size: '—',
+          };
+          localStorage.setItem('generatedDocuments', JSON.stringify([newDoc, ...existingDocs]));
+
+          if (client) {
+            const clientsData = JSON.parse(localStorage.getItem('clientsData') || '[]');
+            const idx = clientsData.findIndex((c) => c.id === client.id);
+            if (idx >= 0) {
+              clientsData[idx].documents = (Number(clientsData[idx].documents) || 0) + 1;
+            } else {
+              clientsData.push({
+                ...client,
+                documents: 1,
+                pinned: false,
+                joinDate: client.joinDate || today,
+              });
+            }
+            localStorage.setItem('clientsData', JSON.stringify(clientsData));
+          }
+        } catch (e) {}
+
+        navigate("/documents-overview", { state: { justGenerated: true } });
+      }, 200);
+    }, totalMs);
+
+    return () => {
+      clearInterval(charTimer);
+      cancelAnimationFrame(rafId);
+      clearTimeout(doneTimer);
+    };
+  }, [stage, navigate, selectedDoc, client, formData]);
+
+  // Prefill form when arriving from Client Vault
+  useEffect(() => {
+    if (stage !== 'form' || !selectedDoc || !client || formQuestions.length === 0) return;
+    if (Object.keys(formData).length > 0) return;
+    const updated = { ...formData };
+    formQuestions.forEach((q) => {
+      const ql = (q.question || '').toLowerCase();
+      if (ql.includes("client name")) updated[q.id] = client.name || client.firmName || '';
+      if (ql.includes("client address") || ql.includes("address")) updated[q.id] = client.firmAddress || '';
+      if (ql.includes("contact") || ql.includes("phone")) updated[q.id] = client.phone || '';
+      if (ql.includes("email")) updated[q.id] = client.email || '';
+    });
+    if (Object.keys(updated).length > Object.keys(formData).length) setFormData(updated);
+  }, [stage, selectedDoc, client, formQuestions, formData]);
+  
   // Helper functions for dynamic greeting
   const getShortenedTitle = (userType) => {
     const titleMap = {
@@ -433,8 +539,8 @@ export default function DraftingPage() {
                   setSelectedOption(null);
                   setHoveredOption(null);
                 } else {
-                  alert("Document generated successfully! 🎉");
-                  navigate("/dashboard");
+                  // Show loading screen instead of alert
+                  setStage("loading");
                 }
               } else if (currentQuestion.required) {
                 // Show validation error for required options
@@ -450,8 +556,8 @@ export default function DraftingPage() {
                 if (currentStep < formQuestions.length - 1) {
                   setCurrentStep(currentStep + 1);
                 } else {
-                  alert("Document generated successfully! 🎉");
-                  navigate("/dashboard");
+                  // Show loading screen instead of alert
+                  setStage("loading");
                 }
               }
             }
@@ -845,8 +951,8 @@ export default function DraftingPage() {
                                     [formQuestions[currentStep].id]: selectedOption,
                                   });
                                 }
-                                alert("Document generated successfully! 🎉");
-                                navigate("/dashboard");
+                                // Show loading screen instead of alert
+                                setStage("loading");
                               }
                             }}
                             className={`nav-button-finish ${animateButton === 'finish' ? 'animate-border' : ''}`}
@@ -860,6 +966,50 @@ export default function DraftingPage() {
                   </AnimatePresence>
                 </div>
               )}
+            </motion.div>
+          )}
+
+          {/* ---------------- LOADING SCREEN ---------------- */}
+          {stage === "loading" && (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="doc-loading-screen"
+            >
+              <div className="doc-card-wrap">
+                <motion.div
+                  className="doc-card"
+                  initial={{ scale: 0.98 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                >
+                  {mockLines.map((line, idx) => {
+                    const isCurrent = idx === typedState.lineIndex;
+                    const shown = idx < typedState.lineIndex
+                      ? line
+                      : isCurrent
+                        ? line.slice(0, typedState.charIndex)
+                        : "";
+                    const completed = idx < typedState.lineIndex;
+                    return (
+                      <div key={idx} className={`doc-line ${completed ? 'done' : ''}`}>
+                        <span>{shown}</span>
+                        {isCurrent && <span className="blinking-cursor">|</span>}
+                      </div>
+                    );
+                  })}
+                </motion.div>
+              </div>
+
+              <div className="doc-loading-progress">
+                <div className="doc-loading-label">Drafting your document…</div>
+                <div className="doc-loading-bar">
+                  <div className="doc-loading-fill" style={{ width: `${loadingProgress}%` }} />
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

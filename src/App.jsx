@@ -3,12 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./styles/global.css";
 import Navbar from "./components/Navbar";
 import LandingPage from "./pages/LandingPage";
-import Footer from "./components/Footer";
 import Signup from "./components/Signup";
 import Dashboard from "./components/Dashboard";
 import ClientVault from "./components/ClientVault";
 import DocumentsOverview from "./components/DocumentsOverview";
-import PendingDocuments from "./components/PendingDocuments";
 import ComplianceCalendar from "./components/ComplianceCalendar";
 import Notifications from "./components/Notifications";
 import ProfileSettings from "./components/ProfileSettings";
@@ -24,7 +22,6 @@ function HomePage() {
       <main className="main-content">
         <LandingPage />
       </main>
-      <Footer />
     </div>
   );
 }
@@ -40,10 +37,10 @@ function SignupPage() {
 
 function DashboardPage() {
   return (
-    <div className="dashboard-page-wrapper">
+    <>
       <Navbar />
       <Dashboard />
-    </div>
+    </>
   );
 }
 
@@ -65,14 +62,6 @@ function DocumentsOverviewPage() {
   );
 }
 
-function PendingDocumentsPage() {
-  return (
-    <div className="pending-documents-page">
-      <Navbar />
-      <PendingDocuments />
-    </div>
-  );
-}
 
 function ComplianceCalendarPage() {
   return (
@@ -92,7 +81,6 @@ function App() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/client-vault" element={<ClientVaultPage />} />
         <Route path="/documents-overview" element={<DocumentsOverviewPage />} />
-        <Route path="/pending-documents" element={<PendingDocumentsPage />} />
         <Route
           path="/compliance-calendar"
           element={<ComplianceCalendarPage />}

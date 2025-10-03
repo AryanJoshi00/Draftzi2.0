@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   FaArrowLeft,
   FaFileAlt,
@@ -16,62 +16,21 @@ import "../styles/DocumentsOverview.css";
 
 export default function DocumentsOverview() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
+  const [documents, setDocuments] = useState([]);
+  const justGenerated = location.state?.justGenerated;
+  const tourSeen = (typeof window !== 'undefined') && localStorage.getItem('documentsTourSeen') === 'true';
 
-  // Mock document data
-  const documents = [
-    {
-      id: 1,
-      title: "Legal Contract Template",
-      type: "Contract",
-      client: "Aryan & Co.",
-      createdDate: "2024-01-15",
-      lastModified: "2024-01-20",
-      status: "Completed",
-      size: "2.3 MB",
-    },
-    {
-      id: 2,
-      title: "Non-Disclosure Agreement",
-      type: "Agreement",
-      client: "Kevin Law Associates",
-      createdDate: "2024-01-18",
-      lastModified: "2024-01-22",
-      status: "In Review",
-      size: "1.8 MB",
-    },
-    {
-      id: 3,
-      title: "Employment Contract",
-      type: "Contract",
-      client: "Smith & Partners",
-      createdDate: "2024-01-20",
-      lastModified: "2024-01-25",
-      status: "Draft",
-      size: "3.1 MB",
-    },
-    {
-      id: 4,
-      title: "Terms of Service",
-      type: "Policy",
-      client: "Johnson Legal Group",
-      createdDate: "2024-01-22",
-      lastModified: "2024-01-24",
-      status: "Completed",
-      size: "1.5 MB",
-    },
-    {
-      id: 5,
-      title: "Privacy Policy",
-      type: "Policy",
-      client: "Aryan & Co.",
-      createdDate: "2024-01-25",
-      lastModified: "2024-01-26",
-      status: "In Review",
-      size: "2.1 MB",
-    },
-  ];
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('generatedDocuments') || '[]');
+      setDocuments(stored);
+    } catch {
+      setDocuments([]);
+    }
+  }, []);
 
   const filteredDocuments = documents.filter((doc) => {
     const matchesSearch =
@@ -114,6 +73,8 @@ export default function DocumentsOverview() {
             Manage and track all your generated documents
           </p>
         </div>
+
+        {/* Removed inline success banner per request */}
 
         {/* Search and Filter Section */}
         <div className="overview-controls">
@@ -183,6 +144,12 @@ export default function DocumentsOverview() {
           </div>
         </div>
 
+        {justGenerated && (
+          <div className="inline-success-banner">
+            <strong>Document generated successfully.</strong> Please review the document and approve it to finalize.
+          </div>
+        )}
+
         {/* Documents List */}
         <div className="documents-list">
           <h2 className="list-title">All Documents</h2>
@@ -196,8 +163,8 @@ export default function DocumentsOverview() {
               <div className="header-cell">Actions</div>
             </div>
             <div className="table-body">
-              {filteredDocuments.map((document) => (
-                <div key={document.id} className="table-row">
+              {filteredDocuments.map((document, idx) => (
+                <div key={document.id} className={`table-row ${(justGenerated && !tourSeen && idx === 0) ? 'tour-highlight' : ''}`}>
                   <div className="table-cell document-info">
                     <div className="document-icon">
                       <FaFileAlt />
@@ -242,6 +209,21 @@ export default function DocumentsOverview() {
                       <button className="action-btn delete" title="Delete">
                         <FaTrash />
                       </button>
+                      <button
+                        className={`approve-btn ${(justGenerated && !tourSeen && idx === 0) ? 'tour-pulse' : ''}`}
+                        title="Approve"
+                        onClick={() => {
+                          try {
+                            const stored = JSON.parse(localStorage.getItem('generatedDocuments') || '[]');
+                            const updated = stored.map((d) => d.id === document.id ? { ...d, status: 'Completed' } : d);
+                            localStorage.setItem('generatedDocuments', JSON.stringify(updated));
+                            setDocuments(updated);
+                            localStorage.setItem('documentsTourSeen', 'true');
+                          } catch {}
+                        }}
+                      >
+                        Approve
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -249,6 +231,31 @@ export default function DocumentsOverview() {
             </div>
           </div>
         </div>
+
+        {/* First-run tutorial modal */}
+        {(justGenerated && !tourSeen) && (
+          <div className="tour-overlay" role="dialog" aria-modal="true">
+            <div className="tour-modal">
+              <h3>Review & Approve</h3>
+              <ol className="tour-steps">
+                <li>Open the latest document (highlighted).</li>
+                <li>Skim key details for accuracy.</li>
+                <li>Click <strong>Approve</strong> to finalize.</li>
+              </ol>
+              <div className="tour-actions">
+                <button
+                  className="tour-primary"
+                  onClick={() => {
+                    try { localStorage.setItem('documentsTourSeen', 'true'); } catch {}
+                    setFilterType((v) => v);
+                  }}
+                >
+                  Got it
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
