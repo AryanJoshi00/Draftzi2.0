@@ -498,6 +498,11 @@
   .action-buttons {
     flex-wrap: wrap;
   }
+
+  /* Ensure this page can scroll fully on mobile, even if a parent wrapper was fixed */
+  .documents-overview-page {
+    overflow-y: auto;
+  }
 }
 
 @media (max-width: 480px) {

@@ -105,11 +105,26 @@ export default function Dashboard() {
 
   // Disable page scrolling when dashboard is mounted
   useEffect(() => {
+    // Keep desktop lock, allow mobile to scroll
     const previousHtmlOverflow = document.documentElement.style.overflow;
     const previousBodyOverflow = document.body.style.overflow;
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
+
+    const applyOverflow = () => {
+      const isMobile = window.matchMedia("(max-width: 768px)").matches;
+      if (isMobile) {
+        document.documentElement.style.overflow = previousHtmlOverflow || "";
+        document.body.style.overflow = previousBodyOverflow || "";
+      } else {
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+      }
+    };
+
+    applyOverflow();
+    window.addEventListener("resize", applyOverflow);
+
     return () => {
+      window.removeEventListener("resize", applyOverflow);
       document.documentElement.style.overflow = previousHtmlOverflow;
       document.body.style.overflow = previousBodyOverflow;
     };

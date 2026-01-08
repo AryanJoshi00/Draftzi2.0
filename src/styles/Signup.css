@@ -18,7 +18,7 @@
   height: 80vh;
   max-width: none;
   text-align: center;
-  overflow: hidden; /* Changed from overflow-y: auto to prevent scrolling issues */
+  overflow: hidden; /* Desktop: keep visuals tidy */
   margin: 0; /* Remove margin since we're using absolute positioning */
   display: flex;
   flex-direction: column;
@@ -213,7 +213,7 @@
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 16px 20px 16px 50px;
+  padding: 16px 20px 16px 60px;
   border: 2px solid #e1e5e9;
   border-radius: 12px;
   font-size: 16px;
@@ -314,7 +314,7 @@
 
 .select-placeholder {
   position: absolute;
-  left: 50px; /* aligns with input text after icon */
+  left: 60px; /* aligns with input text after icon */
   top: 50%;
   transform: translateY(-50%);
   color: #999; /* match input placeholder grey */
@@ -524,8 +524,13 @@
 @media (max-width: 768px) {
   .signup-container {
     padding: 32px 20px;
-    height: 65vh; /* Slightly taller on mobile */
-    top: calc(50% + 30px); /* Adjust for mobile navbar height */
+    height: auto; /* Allow content to define height */
+    min-height: calc(100vh - 70px); /* Full screen minus navbar */
+    top: auto;
+    left: auto;
+    transform: none;
+    position: relative; /* Take normal flow so bottom content isn't clipped */
+    overflow-y: auto; /* Allow scrolling if content is taller than viewport */
   }
 
   .signup-header h1 {

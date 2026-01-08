@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight, Play } from "lucide-react";
 import { useScrollAnimation } from "../hooks/useScrollAnimation";
 import "./Hero.css";
+import heroImg from "../assets/images/heroimg.png";
 
 export default function Hero() {
   const navigate = useNavigate();
@@ -66,11 +67,11 @@ export default function Hero() {
         </div>
         
         <div className="hero-visual stagger-item">
-          {/* Dashboard Screenshot Placeholder */}
+          {/* Hero Image */}
           <div className="hero-dashboard-screenshot">
             <img 
-              src="/dashboard-screenshot.png" 
-              alt="Draftzi Dashboard" 
+              src={heroImg} 
+              alt="Draftzi Hero" 
               style={{ 
                 width: '100%', 
                 height: 'auto', 

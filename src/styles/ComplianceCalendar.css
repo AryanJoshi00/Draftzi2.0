@@ -651,6 +651,11 @@
   .deadline-actions {
     flex-direction: column;
   }
+
+  /* Let the main page scroll naturally on mobile */
+  .compliance-calendar-page {
+    overflow-y: auto;
+  }
 }
 
 @media (max-width: 480px) {

@@ -7,7 +7,7 @@
   justify-content: center;
   padding: 20px;
   margin-top: 0; /* Remove extra height that could cause page scroll */
-  overflow: hidden; /* Prevent page-level scrolling - match signup page */
+  overflow: hidden; /* Desktop: keep background tidy */
 }
 
 /* Dashboard Container - Matching signup-container exactly */
@@ -20,7 +20,7 @@
   height: 80vh;
   max-width: none;
   text-align: center;
-  overflow: hidden; /* Prevent scrolling - match signup page */
+  overflow: hidden; /* Desktop: prevent internal scroll */
   margin: 0;
   display: flex;
   flex-direction: row;
@@ -768,7 +768,7 @@
 @media (max-width: 1024px) {
   .dashboard-container {
     flex-direction: column;
-    height: 80vh; /* Reduced height */
+    height: 80vh; /* Reduced height on tablets/landscape */
   }
 
   .dashboard-left {
@@ -820,9 +820,21 @@
 }
 
 @media (max-width: 768px) {
+  .dashboard-page-wrapper {
+    align-items: flex-start; /* Let content start below navbar */
+    padding-top: 80px; /* Space for navbar on mobile */
+    overflow: visible; /* Allow page to scroll */
+  }
+
   .dashboard-container {
     padding: 24px 20px; /* Reduced padding */
-    height: 70vh; /* Reduced height */
+    height: auto; /* Let content define height */
+    min-height: calc(100vh - 70px); /* Full viewport minus navbar */
+    position: relative; /* Stop hard centering */
+    top: auto;
+    left: auto;
+    transform: none;
+    overflow-y: auto; /* Allow scrolling on mobile */
   }
 
   .dashboard-left {

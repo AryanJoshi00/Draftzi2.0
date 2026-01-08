@@ -45,7 +45,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 64px;
-  align-items: start;
+  align-items: center;
 }
 
 /* Feature Cards */
@@ -97,6 +97,14 @@
 
 /* Dashboard Preview */
 .solution-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.dashboard-screenshot {
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;

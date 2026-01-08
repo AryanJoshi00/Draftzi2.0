@@ -2,6 +2,7 @@ import React from "react";
 import { Zap, Lock, Calendar, LayoutDashboard } from "lucide-react";
 import { useScrollAnimation } from "../hooks/useScrollAnimation";
 import "./SolutionSection.css";
+import dashboardScreenshot from "../assets/images/dashboard-screenshot.png";
 
 export default function SolutionSection() {
   const [ref, isVisible] = useScrollAnimation({
@@ -65,11 +66,11 @@ export default function SolutionSection() {
             </div>
           </div>
 
-          {/* Dashboard Screenshot Placeholder */}
+          {/* Dashboard Screenshot */}
           <div className="solution-visual stagger-item">
             <div className="dashboard-screenshot">
               <img 
-                src="/dashboard-screenshot.png" 
+                src={dashboardScreenshot} 
                 alt="Draftzi Dashboard" 
                 style={{ 
                   width: '100%', 
