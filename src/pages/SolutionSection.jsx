@@ -65,37 +65,19 @@ export default function SolutionSection() {
             </div>
           </div>
 
+          {/* Dashboard Screenshot Placeholder */}
           <div className="solution-visual stagger-item">
-            <div className="dashboard-preview">
-              <div className="dashboard-header">
-                <h4>Draftzi Dashboard</h4>
-                <span className="status-indicator">Live</span>
-              </div>
-              <div className="dashboard-stats">
-                <div className="stat-item">
-                  <span className="stat-number">12</span>
-                  <span className="stat-label">Pending Documents</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-number">3</span>
-                  <span className="stat-label">Compliance Due</span>
-                </div>
-              </div>
-              <div className="dashboard-recent">
-                <h5>Recent Activity</h5>
-                <div className="activity-item">
-                  <div className="activity-icon">
-                    <Zap size={16} />
-                  </div>
-                  <span>NDA generated for Client ABC</span>
-                </div>
-                <div className="activity-item">
-                  <div className="activity-icon">
-                    <Calendar size={16} />
-                  </div>
-                  <span>GST filing reminder set</span>
-                </div>
-              </div>
+            <div className="dashboard-screenshot">
+              <img 
+                src="/dashboard-screenshot.png" 
+                alt="Draftzi Dashboard" 
+                style={{ 
+                  width: '100%', 
+                  height: 'auto', 
+                  borderRadius: '20px',
+                  boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)'
+                }}
+              />
             </div>
           </div>
         </div>

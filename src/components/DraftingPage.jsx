@@ -449,6 +449,31 @@ export default function DraftingPage() {
     }));
   };
 
+  // Validation helper functions
+  const validatePhoneNumber = (phone) => {
+    // Remove spaces, dashes, and parentheses
+    const cleaned = phone.replace(/[\s\-\(\)]/g, '');
+    // Check if it's all digits (with optional + at start)
+    return /^\+?\d{10,15}$/.test(cleaned);
+  };
+
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validateYear = (yearStr) => {
+    const year = parseInt(yearStr, 10);
+    return !isNaN(year) && year >= 1800 && year <= 2200;
+  };
+
+  const validateName = (name) => {
+    return name && name.trim().length >= 3;
+  };
+
+  const validateAddress = (address) => {
+    return address && address.trim().length >= 10;
+  };
+
   // Form validation function
   const validateCurrentStep = () => {
     const currentQuestion = formQuestions[currentStep];
@@ -468,6 +493,55 @@ export default function DraftingPage() {
         if (!fieldValue || fieldValue.trim() === "") {
           setErrorWithTimer(currentQuestion.id, "This field is required");
           return false;
+        }
+      }
+    }
+
+    // Additional validation for input fields
+    if (currentQuestion.type === "input") {
+      const fieldValue = formData[currentQuestion.id];
+      if (fieldValue && fieldValue.trim() !== "") {
+        const questionLower = currentQuestion.question.toLowerCase();
+        
+        // Validate contact/phone numbers
+        if (questionLower.includes("contact") || questionLower.includes("phone") || questionLower.includes("number")) {
+          if (!validatePhoneNumber(fieldValue)) {
+            setErrorWithTimer(currentQuestion.id, "Please enter a valid phone number (10-15 digits)");
+            return false;
+          }
+        }
+        
+        // Validate email
+        if (questionLower.includes("email")) {
+          if (!validateEmail(fieldValue)) {
+            setErrorWithTimer(currentQuestion.id, "Please enter a valid email address");
+            return false;
+          }
+        }
+        
+        // Validate names (must be at least 3 characters)
+        if (questionLower.includes("name") && !questionLower.includes("company") && !questionLower.includes("firm")) {
+          if (!validateName(fieldValue)) {
+            setErrorWithTimer(currentQuestion.id, "Name must be at least 3 characters long");
+            return false;
+          }
+        }
+        
+        // Validate addresses (must be at least 10 characters)
+        if (questionLower.includes("address")) {
+          if (!validateAddress(fieldValue)) {
+            setErrorWithTimer(currentQuestion.id, "Address must be at least 10 characters long");
+            return false;
+          }
+        }
+        
+        // Validate dates - check if year is in range
+        if (currentQuestion.type === "date") {
+          const year = new Date(fieldValue).getFullYear();
+          if (!validateYear(year.toString())) {
+            setErrorWithTimer(currentQuestion.id, "Year must be between 1800 and 2200");
+            return false;
+          }
         }
       }
     }

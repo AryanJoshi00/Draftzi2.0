@@ -369,6 +369,7 @@ export default function ClientVault() {
     joinDate: new Date().toISOString().slice(0, 10),
     notes: "",
   });
+  const [validationErrors, setValidationErrors] = useState({});
 
   // Helper function to normalize search terms (remove dashes, spaces, etc.)
   const normalizeSearchTerm = (term) => {
@@ -431,6 +432,7 @@ export default function ClientVault() {
   const handleOpenAdd = () => setIsAddOpen(true);
   const handleCloseAdd = () => {
     setIsAddOpen(false);
+    setValidationErrors({});
     // Reset form when closing
     setNewClient({
       id: "",
@@ -489,19 +491,79 @@ export default function ClientVault() {
     );
   };
 
+  // Validation helper functions
+  const validatePhoneNumber = (phone) => {
+    if (!phone) return false;
+    const cleaned = phone.replace(/[\s\-\(\)]/g, '');
+    return /^\+?\d{10,15}$/.test(cleaned);
+  };
+
+  const validateEmail = (email) => {
+    if (!email) return false;
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validateName = (name) => {
+    return name && name.trim().length >= 3;
+  };
+
+  const validateAddress = (address) => {
+    if (!address) return true; // Address is optional
+    return address.trim().length >= 10;
+  };
+
   const handleAddClient = (e) => {
     e.preventDefault();
     
+    const errors = {};
+    
     // Validate required fields
-    if (!newClient.id || !newClient.name || !newClient.phone || !newClient.email) {
-      return;
+    if (!newClient.id) {
+      errors.id = "Client ID is required";
+    }
+    if (!newClient.name) {
+      errors.name = "Client name is required";
+    }
+    if (!newClient.phone) {
+      errors.phone = "Contact number is required";
+    }
+    if (!newClient.email) {
+      errors.email = "Email is required";
+    }
+
+    // Validate name (minimum 3 characters)
+    if (newClient.name && !validateName(newClient.name)) {
+      errors.name = "Client name must be at least 3 characters long";
+    }
+
+    // Validate phone number
+    if (newClient.phone && !validatePhoneNumber(newClient.phone)) {
+      errors.phone = "Please enter a valid phone number (10-15 digits)";
+    }
+
+    // Validate email
+    if (newClient.email && !validateEmail(newClient.email)) {
+      errors.email = "Please enter a valid email address";
+    }
+
+    // Validate address if provided
+    if (newClient.firmAddress && !validateAddress(newClient.firmAddress)) {
+      errors.firmAddress = "Address must be at least 10 characters long";
     }
 
     // Check if ID already exists
-    if (clients.some(client => client.id.toString() === newClient.id.toString())) {
-      alert("Client ID already exists. Please use a different ID.");
+    if (newClient.id && clients.some(client => client.id.toString() === newClient.id.toString())) {
+      errors.id = "Client ID already exists. Please use a different ID";
+    }
+
+    // If there are errors, set them and return
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
       return;
     }
+
+    // Clear errors if validation passes
+    setValidationErrors({});
 
     // Create new client with proper ID conversion
     const clientToAdd = {
@@ -812,11 +874,22 @@ export default function ClientVault() {
               <input
                 type="text"
                 value={newClient.name}
-                onChange={(e) =>
-                  setNewClient({ ...newClient, name: e.target.value })
-                }
+                onChange={(e) => {
+                  setNewClient({ ...newClient, name: e.target.value });
+                  if (validationErrors.name) {
+                    setValidationErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.name;
+                      return newErrors;
+                    });
+                  }
+                }}
+                className={validationErrors.name ? 'error-input' : ''}
                 required
               />
+              {validationErrors.name && (
+                <span className="error-message">{validationErrors.name}</span>
+              )}
             </label>
             <label>
               <span className="form-label">Client ID</span>
@@ -824,12 +897,23 @@ export default function ClientVault() {
                 type="number"
                 min="1"
                 value={newClient.id}
-                onChange={(e) =>
-                  setNewClient({ ...newClient, id: e.target.value })
-                }
+                onChange={(e) => {
+                  setNewClient({ ...newClient, id: e.target.value });
+                  if (validationErrors.id) {
+                    setValidationErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.id;
+                      return newErrors;
+                    });
+                  }
+                }}
+                className={validationErrors.id ? 'error-input' : ''}
                 placeholder="15"
                 required
               />
+              {validationErrors.id && (
+                <span className="error-message">{validationErrors.id}</span>
+              )}
             </label>
             <label>
               <span className="form-label">Firm Name (optional)</span>
@@ -846,10 +930,21 @@ export default function ClientVault() {
               <input
                 type="text"
                 value={newClient.firmAddress}
-                onChange={(e) =>
-                  setNewClient({ ...newClient, firmAddress: e.target.value })
-                }
+                onChange={(e) => {
+                  setNewClient({ ...newClient, firmAddress: e.target.value });
+                  if (validationErrors.firmAddress) {
+                    setValidationErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.firmAddress;
+                      return newErrors;
+                    });
+                  }
+                }}
+                className={validationErrors.firmAddress ? 'error-input' : ''}
               />
+              {validationErrors.firmAddress && (
+                <span className="error-message">{validationErrors.firmAddress}</span>
+              )}
             </label>
             <label>
               <span className="form-label">Client Industry</span>
@@ -875,22 +970,44 @@ export default function ClientVault() {
               <input
                 type="text"
                 value={newClient.phone}
-                onChange={(e) =>
-                  setNewClient({ ...newClient, phone: e.target.value })
-                }
+                onChange={(e) => {
+                  setNewClient({ ...newClient, phone: e.target.value });
+                  if (validationErrors.phone) {
+                    setValidationErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.phone;
+                      return newErrors;
+                    });
+                  }
+                }}
+                className={validationErrors.phone ? 'error-input' : ''}
                 required
               />
+              {validationErrors.phone && (
+                <span className="error-message">{validationErrors.phone}</span>
+              )}
             </label>
             <label>
               <span className="form-label">Email</span>
               <input
                 type="email"
                 value={newClient.email}
-                onChange={(e) =>
-                  setNewClient({ ...newClient, email: e.target.value })
-                }
+                onChange={(e) => {
+                  setNewClient({ ...newClient, email: e.target.value });
+                  if (validationErrors.email) {
+                    setValidationErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.email;
+                      return newErrors;
+                    });
+                  }
+                }}
+                className={validationErrors.email ? 'error-input' : ''}
                 required
               />
+              {validationErrors.email && (
+                <span className="error-message">{validationErrors.email}</span>
+              )}
             </label>
             <label>
               <span className="form-label">GST Number (optional)</span>

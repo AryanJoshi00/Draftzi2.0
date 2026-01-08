@@ -45,16 +45,44 @@ export default function Navbar() {
           >
             Home
           </a>
-          <a href="#" className="nav-link">
+          <a 
+            href="#" 
+            className={`nav-link ${isActive("/features") ? "active" : ""}`}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavClick("/features");
+            }}
+          >
             Features
           </a>
-          <a href="#" className="nav-link">
+          <a 
+            href="#" 
+            className={`nav-link ${isActive("/pricing") ? "active" : ""}`}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavClick("/pricing");
+            }}
+          >
             Pricing
           </a>
-          <a href="#" className="nav-link">
+          <a 
+            href="#" 
+            className={`nav-link ${isActive("/about") ? "active" : ""}`}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavClick("/about");
+            }}
+          >
             About
           </a>
-          <a href="#" className="nav-link">
+          <a 
+            href="#" 
+            className={`nav-link ${isActive("/contact") ? "active" : ""}`}
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavClick("/contact");
+            }}
+          >
             Contact
           </a>
         </div>
@@ -87,16 +115,44 @@ export default function Navbar() {
         >
           Home
         </a>
-        <a href="#" className="mobile-nav-link">
+        <a 
+          href="#" 
+          className={`mobile-nav-link ${isActive("/features") ? "active" : ""}`}
+          onClick={(e) => {
+            e.preventDefault();
+            handleNavClick("/features");
+          }}
+        >
           Features
         </a>
-        <a href="#" className="mobile-nav-link">
+        <a 
+          href="#" 
+          className={`mobile-nav-link ${isActive("/pricing") ? "active" : ""}`}
+          onClick={(e) => {
+            e.preventDefault();
+            handleNavClick("/pricing");
+          }}
+        >
           Pricing
         </a>
-        <a href="#" className="mobile-nav-link">
+        <a 
+          href="#" 
+          className={`mobile-nav-link ${isActive("/about") ? "active" : ""}`}
+          onClick={(e) => {
+            e.preventDefault();
+            handleNavClick("/about");
+          }}
+        >
           About
         </a>
-        <a href="#" className="mobile-nav-link">
+        <a 
+          href="#" 
+          className={`mobile-nav-link ${isActive("/contact") ? "active" : ""}`}
+          onClick={(e) => {
+            e.preventDefault();
+            handleNavClick("/contact");
+          }}
+        >
           Contact
         </a>
         <div className="mobile-auth">

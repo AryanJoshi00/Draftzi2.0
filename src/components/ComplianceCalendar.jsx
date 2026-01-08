@@ -8,6 +8,8 @@ export default function ComplianceCalendar() {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editingDeadline, setEditingDeadline] = useState(null);
   const [clientQuery, setClientQuery] = useState("");
   const [selectedClient, setSelectedClient] = useState(null);
   const [deadlineForm, setDeadlineForm] = useState({
@@ -62,12 +64,31 @@ export default function ComplianceCalendar() {
 
   const openAdd = () => {
     setIsAddOpen(true);
+    setIsEditOpen(false);
+    setEditingDeadline(null);
     setSelectedClient(null);
     setClientQuery("");
     setDeadlineForm({ type: "", dueDate: "", priority: "medium", description: "" });
   };
 
-  const closeAdd = () => setIsAddOpen(false);
+  const openEdit = (deadline) => {
+    setEditingDeadline(deadline);
+    setIsEditOpen(true);
+    setIsAddOpen(false);
+    setSelectedClient(deadline.client);
+    setDeadlineForm({
+      type: deadline.type,
+      dueDate: deadline.date,
+      priority: deadline.priority,
+      description: deadline.description || "",
+    });
+  };
+
+  const closeAdd = () => {
+    setIsAddOpen(false);
+    setIsEditOpen(false);
+    setEditingDeadline(null);
+  };
 
   const filteredClients = useMemo(() => {
     const q = clientQuery.trim().toLowerCase();
@@ -225,7 +246,12 @@ export default function ComplianceCalendar() {
               {selectedDate ? (
                 selectedDateDeadlines.length ? (
                   selectedDateDeadlines.map(item => (
-                    <div key={item.id} className={`deadline-item ${item.priority}`}>
+                    <div 
+                      key={item.id} 
+                      className={`deadline-item ${item.priority}`}
+                      onClick={() => openEdit(item)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <div className="deadline-item-header">
                         <span className="deadline-badge" data-priority={item.priority}>
                           {item.priority}
@@ -248,12 +274,12 @@ export default function ComplianceCalendar() {
           </div>
         </div>
 
-        {/* Add Deadline Modal */}
-        {isAddOpen && createPortal(
+        {/* Add/Edit Deadline Modal */}
+        {(isAddOpen || isEditOpen) && createPortal(
           <div className="modal-overlay" onClick={closeAdd}>
             <div className="modal wide-modal centered-modal" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
-                <h3>Add Deadline</h3>
+                <h3>{isEditOpen ? 'Edit Deadline' : 'Add Deadline'}</h3>
                 <button className="close" onClick={closeAdd}>×</button>
               </div>
               <div className="modal-body">
@@ -286,18 +312,35 @@ export default function ComplianceCalendar() {
                 ) : (
                   <form className="form-list" onSubmit={(e) => {
                     e.preventDefault();
-                    const newItem = {
-                      id: deadlines.length ? Math.max(...deadlines.map(d => d.id)) + 1 : 1,
-                      client: selectedClient,
-                      type: deadlineForm.type || "",
-                      date: deadlineForm.dueDate,
-                      priority: deadlineForm.priority,
-                      description: deadlineForm.description || "",
-                    };
-                    setDeadlines(prev => [...prev, newItem]);
-                    // Select the due date to show new item immediately
-                    const parsed = parseLocalDate(newItem.date);
-                    setSelectedDate(parsed);
+                    if (isEditOpen && editingDeadline) {
+                      // Update existing deadline
+                      setDeadlines(prev => prev.map(d => 
+                        d.id === editingDeadline.id 
+                          ? {
+                              ...d,
+                              client: selectedClient,
+                              type: deadlineForm.type || "",
+                              date: deadlineForm.dueDate,
+                              priority: deadlineForm.priority,
+                              description: deadlineForm.description || "",
+                            }
+                          : d
+                      ));
+                    } else {
+                      // Add new deadline
+                      const newItem = {
+                        id: deadlines.length ? Math.max(...deadlines.map(d => d.id)) + 1 : 1,
+                        client: selectedClient,
+                        type: deadlineForm.type || "",
+                        date: deadlineForm.dueDate,
+                        priority: deadlineForm.priority,
+                        description: deadlineForm.description || "",
+                      };
+                      setDeadlines(prev => [...prev, newItem]);
+                      // Select the due date to show new item immediately
+                      const parsed = parseLocalDate(newItem.date);
+                      setSelectedDate(parsed);
+                    }
                     closeAdd();
                   }}>
                     <div className="selected-client-box">Client: <strong>{selectedClient}</strong></div>
@@ -336,8 +379,14 @@ export default function ComplianceCalendar() {
                     <div className="modal-footer">
                       <div></div>
                       <div className="modal-footer-right">
-                        <button type="button" className="action-btn secondary" onClick={() => setSelectedClient(null)}>Back</button>
-                        <button type="submit" className="action-btn primary">Save Deadline</button>
+                        <button type="button" className="action-btn secondary" onClick={() => {
+                          if (isEditOpen) {
+                            closeAdd();
+                          } else {
+                            setSelectedClient(null);
+                          }
+                        }}>{isEditOpen ? 'Cancel' : 'Back'}</button>
+                        <button type="submit" className="action-btn primary">{isEditOpen ? 'Update Deadline' : 'Save Deadline'}</button>
                       </div>
                     </div>
                   </form>

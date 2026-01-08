@@ -66,55 +66,18 @@ export default function Hero() {
         </div>
         
         <div className="hero-visual stagger-item">
-          <div className="hero-cards">
-            <div className="floating-card card-1">
-              <div className="card-header">
-                <div className="card-icon">📄</div>
-                <span>NDA</span>
-              </div>
-              <div className="card-status">Ready</div>
-            </div>
-            
-            <div className="floating-card card-2">
-              <div className="card-header">
-                <div className="card-icon">📋</div>
-                <span>Employment Agreement</span>
-              </div>
-              <div className="card-status">Generating...</div>
-            </div>
-            
-            <div className="floating-card card-3">
-              <div className="card-header">
-                <div className="card-icon">⚖️</div>
-                <span>Legal Notice</span>
-              </div>
-              <div className="card-status">Complete</div>
-            </div>
-          </div>
-          
-          <div className="hero-dashboard">
-            <div className="dashboard-header">
-              <h3>Draftzi Dashboard</h3>
-              <div className="dashboard-status">
-                <div className="status-dot"></div>
-                <span>Live</span>
-              </div>
-            </div>
-            
-            <div className="dashboard-stats">
-              <div className="stat">
-                <span className="stat-number">24</span>
-                <span className="stat-label">Documents</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">5</span>
-                <span className="stat-label">Templates</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">12</span>
-                <span className="stat-label">Clients</span>
-              </div>
-            </div>
+          {/* Dashboard Screenshot Placeholder */}
+          <div className="hero-dashboard-screenshot">
+            <img 
+              src="/dashboard-screenshot.png" 
+              alt="Draftzi Dashboard" 
+              style={{ 
+                width: '100%', 
+                height: 'auto', 
+                borderRadius: '20px',
+                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)'
+              }}
+            />
           </div>
         </div>
       </div>

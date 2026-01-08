@@ -20,8 +20,15 @@ export default function DocumentsOverview() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [documents, setDocuments] = useState([]);
+  const [showTour, setShowTour] = useState(false);
   const justGenerated = location.state?.justGenerated;
   const tourSeen = (typeof window !== 'undefined') && localStorage.getItem('documentsTourSeen') === 'true';
+  
+  useEffect(() => {
+    if (justGenerated && !tourSeen) {
+      setShowTour(true);
+    }
+  }, [justGenerated, tourSeen]);
 
   useEffect(() => {
     try {
@@ -48,14 +55,30 @@ export default function DocumentsOverview() {
 
   const getStatusColor = (status) => {
     switch (status) {
+      case "Approved":
       case "Completed":
-        return "#10b981";
+        return "#10b981"; // Green
+      case "Pending Review":
       case "In Review":
-        return "#f59e0b";
+        return "#f59e0b"; // Yellow
+      case "Unapproved":
+        return "#dc2626"; // Red
       case "Draft":
-        return "#6b7280";
       default:
-        return "#6b7280";
+        return "#ffffff"; // White (default created)
+    }
+  };
+
+  const handleStatusChange = (documentId, newStatus) => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('generatedDocuments') || '[]');
+      const updated = stored.map((d) => 
+        d.id === documentId ? { ...d, status: newStatus } : d
+      );
+      localStorage.setItem('generatedDocuments', JSON.stringify(updated));
+      setDocuments(updated);
+    } catch (error) {
+      console.error('Error updating document status:', error);
     }
   };
 
@@ -190,9 +213,11 @@ export default function DocumentsOverview() {
                       className="status-badge"
                       style={{
                         backgroundColor: getStatusColor(document.status),
+                        color: document.status === 'Draft' || !document.status ? '#1a1a1a' : '#ffffff',
+                        border: (document.status === 'Draft' || !document.status) ? '2px solid #e2e8f0' : 'none'
                       }}
                     >
-                      {document.status}
+                      {document.status || 'Draft'}
                     </span>
                   </div>
                   <div className="table-cell">
@@ -209,21 +234,41 @@ export default function DocumentsOverview() {
                       <button className="action-btn delete" title="Delete">
                         <FaTrash />
                       </button>
-                      <button
-                        className={`approve-btn ${(justGenerated && !tourSeen && idx === 0) ? 'tour-pulse' : ''}`}
-                        title="Approve"
-                        onClick={() => {
-                          try {
-                            const stored = JSON.parse(localStorage.getItem('generatedDocuments') || '[]');
-                            const updated = stored.map((d) => d.id === document.id ? { ...d, status: 'Completed' } : d);
-                            localStorage.setItem('generatedDocuments', JSON.stringify(updated));
-                            setDocuments(updated);
-                            localStorage.setItem('documentsTourSeen', 'true');
-                          } catch {}
-                        }}
-                      >
-                        Approve
-                      </button>
+                      {/* Status Action Buttons */}
+                      <div className="status-action-buttons">
+                        <button
+                          className="status-btn white"
+                          title="Set as Draft (Default)"
+                          onClick={() => handleStatusChange(document.id, 'Draft')}
+                          style={{ backgroundColor: '#ffffff', color: '#1a1a1a', border: '2px solid #e2e8f0' }}
+                        >
+                          Draft
+                        </button>
+                        <button
+                          className="status-btn yellow"
+                          title="Set as Pending Review"
+                          onClick={() => handleStatusChange(document.id, 'Pending Review')}
+                          style={{ backgroundColor: '#f59e0b', color: '#ffffff' }}
+                        >
+                          Review
+                        </button>
+                        <button
+                          className="status-btn green"
+                          title="Approve"
+                          onClick={() => handleStatusChange(document.id, 'Approved')}
+                          style={{ backgroundColor: '#10b981', color: '#ffffff' }}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          className="status-btn red"
+                          title="Unapprove"
+                          onClick={() => handleStatusChange(document.id, 'Unapproved')}
+                          style={{ backgroundColor: '#dc2626', color: '#ffffff' }}
+                        >
+                          Reject
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -233,9 +278,12 @@ export default function DocumentsOverview() {
         </div>
 
         {/* First-run tutorial modal */}
-        {(justGenerated && !tourSeen) && (
-          <div className="tour-overlay" role="dialog" aria-modal="true">
-            <div className="tour-modal">
+        {showTour && (
+          <div className="tour-overlay" role="dialog" aria-modal="true" onClick={() => {
+            setShowTour(false);
+            try { localStorage.setItem('documentsTourSeen', 'true'); } catch {}
+          }}>
+            <div className="tour-modal" onClick={(e) => e.stopPropagation()}>
               <h3>Review & Approve</h3>
               <ol className="tour-steps">
                 <li>Open the latest document (highlighted).</li>
@@ -246,8 +294,8 @@ export default function DocumentsOverview() {
                 <button
                   className="tour-primary"
                   onClick={() => {
+                    setShowTour(false);
                     try { localStorage.setItem('documentsTourSeen', 'true'); } catch {}
-                    setFilterType((v) => v);
                   }}
                 >
                   Got it

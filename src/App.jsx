@@ -14,6 +14,10 @@ import UpgradePlan from "./components/UpgradePlan";
 import AccountSettings from "./components/AccountSettings";
 import Help from "./components/Help";
 import DraftingPage from "./components/DraftingPage";
+import Features from "./pages/Features";
+import Pricing from "./pages/Pricing";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 
 function HomePage() {
   return (
@@ -91,6 +95,10 @@ function App() {
         <Route path="/account-settings" element={<div className="client-vault-page"><Navbar /><AccountSettings /></div>} />
         <Route path="/help" element={<div className="client-vault-page"><Navbar /><Help /></div>} />
         <Route path="/drafting" element={<DraftingPage />} />
+        <Route path="/features" element={<div className="app-wrapper"><Navbar /><Features /></div>} />
+        <Route path="/pricing" element={<div className="app-wrapper"><Navbar /><Pricing /></div>} />
+        <Route path="/about" element={<div className="app-wrapper"><Navbar /><About /></div>} />
+        <Route path="/contact" element={<div className="app-wrapper"><Navbar /><Contact /></div>} />
       </Routes>
     </Router>
   );

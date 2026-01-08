@@ -804,6 +804,19 @@
   grid-column: 1 / -1;
 }
 
+/* Error styling for validation */
+.form-list .error-input {
+  border-color: #dc2626 !important;
+  background-color: #fef2f2;
+}
+
+.form-list .error-message {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
 /* Detail List Layout (for View modal) */
 .detail-list {
   display: flex;
